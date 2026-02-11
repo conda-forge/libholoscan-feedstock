@@ -1,4 +1,4 @@
-{% set version = "3.10.0.0" %}
+{% set version = "3.11.0.2" %}
 {% set abiversion = version.split('.')[0] %}
 {% set libversion = version.split('.')[:3] | join('.') %}
 {% set libtorch_version = "2.7.*" %}
@@ -13,8 +13,8 @@
 {% set platform = "linux-sbsa" %}    # [aarch64]
 {% set extension = "tar.xz" %}
 
-{% set sha256 = "e56ce729642118e257cc4a89fbc4fcc41acd11c100c9d065477ee9e7d1455adf" %}  # [linux64]
-{% set sha256 = "af6859f9416795456f2bab2e4b31feabeeb6cb2ffe9cf1b1ca40063fef534a85" %}  # [aarch64 and arm_variant_type == "sbsa"]
+{% set sha256 = "a284682e8aff26690732d3af4e37e83032fab1b49fc4dd46a67c6833ef31ef0e" %}  # [linux64]
+{% set sha256 = "fbf0c0436aad9f837fcdcf02cd4d429b6758250594e919c7b0b7dad01c578158" %}  # [aarch64 and arm_variant_type == "sbsa"]
 
 package:
   name: libholoscan-split
@@ -25,7 +25,7 @@ source:
     sha256: {{ sha256 }}
 
 build:
-  number: 2
+  number: 0
   skip: true  # [not (linux64 or aarch64)]
   skip: true  # [cuda_compiler_version in (None, "None", "") or (cuda_compiler_version or "").startswith("11")]
 
