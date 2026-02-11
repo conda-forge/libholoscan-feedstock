@@ -3,6 +3,10 @@ About libholoscan-feedstock
 
 Feedstock license: [BSD-3-Clause](https://github.com/conda-forge/libholoscan-feedstock/blob/main/LICENSE.txt)
 
+
+About libholoscan
+-----------------
+
 Home: https://docs.nvidia.com/cuda/holoscan/
 
 Package license: [LicenseRef-NVIDIA-End-User-License-Agreement](https://developer.download.nvidia.com/assets/Clara/NVIDIA_Clara_EULA.pdf)
@@ -15,11 +19,55 @@ NVIDIA Holoscan is the AI sensor processing platform that combines hardware syst
 It can be used to build streaming AI pipelines for a variety of domains, including Medical Devices, High Performance Computing at the Edge, Industrial Inspection and more.
 
 
+About libholoscan
+-----------------
+
+
+
+Package license: [LicenseRef-NVIDIA-End-User-License-Agreement](https://developer.download.nvidia.com/assets/Clara/NVIDIA_Clara_EULA.pdf)
+
+Summary: NVIDIA Holoscan runtime library
+
+This is a runtime package only. Developers should install holoscan (python) and/or libholoscan-dev (C++ SDK) to build with Holoscan
+
+
 Current build status
 ====================
 
 
 <table>
+    
+  <tr>
+    <td>Azure</td>
+    <td>
+      <details>
+        <summary>
+          <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=27290&branchName=main">
+            <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/libholoscan-feedstock?branchName=main">
+          </a>
+        </summary>
+        <table>
+          <thead><tr><th>Variant</th><th>Status</th></tr></thead>
+          <tbody><tr>
+              <td>linux_64_c_stdlib_version2.34cuda_compiler_version12.9</td>
+              <td>
+                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=27290&branchName=main">
+                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/libholoscan-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_64_c_stdlib_version2.34cuda_compiler_version12.9" alt="variant">
+                </a>
+              </td>
+            </tr><tr>
+              <td>linux_aarch64_c_stdlib_version2.34cuda_compiler_version12.9</td>
+              <td>
+                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=27290&branchName=main">
+                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/libholoscan-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_aarch64_c_stdlib_version2.34cuda_compiler_version12.9" alt="variant">
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </details>
+    </td>
+  </tr>
 </table>
 
 Current release info
@@ -27,7 +75,7 @@ Current release info
 
 | Name | Downloads | Version | Platforms |
 | --- | --- | --- | --- |
-| [![Conda Recipe](https://img.shields.io/badge/recipe-libholoscan--split-green.svg)](https://anaconda.org/conda-forge/libholoscan-split) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/libholoscan-split.svg)](https://anaconda.org/conda-forge/libholoscan-split) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/libholoscan-split.svg)](https://anaconda.org/conda-forge/libholoscan-split) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/libholoscan-split.svg)](https://anaconda.org/conda-forge/libholoscan-split) |
+| [![Conda Recipe](https://img.shields.io/badge/recipe-libholoscan-green.svg)](https://anaconda.org/conda-forge/libholoscan) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/libholoscan.svg)](https://anaconda.org/conda-forge/libholoscan) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/libholoscan.svg)](https://anaconda.org/conda-forge/libholoscan) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/libholoscan.svg)](https://anaconda.org/conda-forge/libholoscan) |
 
 Installing libholoscan
 ======================
@@ -39,41 +87,41 @@ conda config --add channels conda-forge
 conda config --set channel_priority strict
 ```
 
-Once the `conda-forge` channel has been enabled, `libholoscan-split` can be installed with `conda`:
+Once the `conda-forge` channel has been enabled, `libholoscan` can be installed with `conda`:
 
 ```
-conda install libholoscan-split
-```
-
-or with `mamba`:
-
-```
-mamba install libholoscan-split
-```
-
-It is possible to list all of the versions of `libholoscan-split` available on your platform with `conda`:
-
-```
-conda search libholoscan-split --channel conda-forge
+conda install libholoscan
 ```
 
 or with `mamba`:
 
 ```
-mamba search libholoscan-split --channel conda-forge
+mamba install libholoscan
+```
+
+It is possible to list all of the versions of `libholoscan` available on your platform with `conda`:
+
+```
+conda search libholoscan --channel conda-forge
+```
+
+or with `mamba`:
+
+```
+mamba search libholoscan --channel conda-forge
 ```
 
 Alternatively, `mamba repoquery` may provide more information:
 
 ```
 # Search all versions available on your platform:
-mamba repoquery search libholoscan-split --channel conda-forge
+mamba repoquery search libholoscan --channel conda-forge
 
-# List packages depending on `libholoscan-split`:
-mamba repoquery whoneeds libholoscan-split --channel conda-forge
+# List packages depending on `libholoscan`:
+mamba repoquery whoneeds libholoscan --channel conda-forge
 
-# List dependencies of `libholoscan-split`:
-mamba repoquery depends libholoscan-split --channel conda-forge
+# List dependencies of `libholoscan`:
+mamba repoquery depends libholoscan --channel conda-forge
 ```
 
 
