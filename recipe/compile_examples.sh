@@ -25,7 +25,7 @@ export CXXFLAGS="${CXXFLAGS} -fno-use-linker-plugin"
 echo CC = $CC
 echo CXX = $CXX
 
-cmake -S $PREFIX/examples ${CMAKE_ARGS}
+cmake -S $PREFIX/examples ${CMAKE_ARGS} -DCMAKE_CUDA_ARCHITECTURES="75"
 
 if [[ ${target_platform} == "linux-64" ]]; then
   cmake --build . -j"$(nproc)"

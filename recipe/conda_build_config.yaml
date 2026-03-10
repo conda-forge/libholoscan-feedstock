@@ -3,4 +3,4 @@ c_stdlib_version:              # [unix]
   - 2.34                       # [linux]
 
 cuda_compiler_version_min: # [unix]
-  - 12.6                   # [linux]
+  - 12.9                   # [linux]
