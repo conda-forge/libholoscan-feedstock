@@ -92,9 +92,9 @@ outputs:
         - libtorch * cuda*
         - libvulkan-loader
       run_constrained:
-        - rmm {{ rapids_version }}
+        - librmm {{ rapids_version }}
         - rapids_logger {{ rapids_version }}
-        - ucxx {{ ucxx_version }}
+        - libucxx {{ ucxx_version }}
     test:
       commands:
         # Verify first-party runtime files are present
