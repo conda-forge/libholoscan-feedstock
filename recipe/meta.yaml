@@ -1,20 +1,29 @@
-{% set version = "3.11.0.2" %}
+{% set version = "4.0.0.1" %}
 {% set abiversion = version.split('.')[0] %}
 {% set libversion = version.split('.')[:3] | join('.') %}
-{% set libtorch_version = "2.7.*" %}
-{% set onnx_version = "1.22.*" %}
-{% set ucx_version = "1.19.0.*" %}
-{% set rapids_version = "25.10.*" %}
+# Pins aligned with public/cmake/deps where applicable
+{% set libtorch_version = "2.8.*" %}  # find_package(Torch 2.8) in public/modules/holoinfer/src/infer/torch/CMakeLists.txt
+{% set magic_enum_version = "0.9.*" %}  # magic_enum.cmake: 0.9.3
+{% set onnx_version = "1.22.*" %}  # Dockerfile ONNX_RUNTIME_VERSION=1.22.1
+{% set spdlog_version = "1.14.*" %}  # spdlog_rapids.cmake: 1.14.1
+{% set ucx_version = "1.19.*" %}  # ucx.cmake: find_package(ucx 1.19.0)
+{% set rapids_version = "25.10.*" %}  # rmm.cmake: RMM_TAG v25.10.00
 # This needs to stay in sync with 'rapids_version', e.g. for 'rapids_version=25.10 this should be '0.46.0'.
 # To find the corresponding ucxx_version for a given rapids_version, see e.g.
 # https://version.gpuci.io/rapids/25.10
-{% set ucxx_version = "0.46.*" %}
+{% set ucxx_version = "0.46.*" %}  # ucxx_rapids.cmake: 0.46.0
+# libholoscan-dev build-time deps (from public/cmake/deps)
+{% set fmt_version = "11.*" %}  # fmt_rapids.cmake: 11.0.2
+{% set cli11_version = "2.3.*" %}  # cli11_rapids.cmake: 2.3.2
+{% set dlpack_version = "1.*" %}  # dlpack_rapids.cmake: 1.0
+{% set yaml_cpp_version = "0.8.*" %}  # yaml-cpp_rapids.cmake: 0.8.0
+{% set eigen_version = "3.4.*" %}  # eigen3_urm.cmake: 3.4.0
 {% set platform = "linux-x86_64" %}  # [linux64]
 {% set platform = "linux-sbsa" %}    # [aarch64]
 {% set extension = "tar.xz" %}
 
-{% set sha256 = "a284682e8aff26690732d3af4e37e83032fab1b49fc4dd46a67c6833ef31ef0e" %}  # [linux64]
-{% set sha256 = "fbf0c0436aad9f837fcdcf02cd4d429b6758250594e919c7b0b7dad01c578158" %}  # [aarch64 and arm_variant_type == "sbsa"]
+{% set sha256 = "cb80690526ab974eedf633f486356b2b38886fef3e0507f34711df8fa02bc6cc" %}  # [linux64]
+{% set sha256 = "338c9bea38ff21648d02176e759ac543ca9c208acf9750949eac374142dfb58b" %}  # [aarch64 and arm_variant_type == "sbsa"]
 
 package:
   name: libholoscan-split
@@ -23,9 +32,11 @@ package:
 source:
   - url: https://developer.download.nvidia.com/compute/holoscan/redist/holoscan/{{ platform }}/holoscan-{{ platform }}-{{ version }}_cuda12-archive.{{ extension }}
     sha256: {{ sha256 }}
+    patches:
+      - patches/holoscan-config.patch
 
 build:
-  number: 1
+  number: 0
   skip: true  # [not (linux64 or aarch64)]
   skip: true  # [cuda_compiler_version in (None, "None", "") or (cuda_compiler_version or "").startswith("11")]
 
@@ -74,7 +85,6 @@ outputs:
         - onnxruntime-cpp  {{ onnx_version }}
       run:
         - {{ pin_compatible("cuda-version", max_pin="x") }}  # [cuda_compiler_version != "None"]
-        - cloudpickle
         - cuda-cudart
         - dbus              # [aarch64]  # Without this, segfault happens during camera app test in https://github.com/nvidia-holoscan/holoscan-sdk/tree/main/python
         - libegl
@@ -82,11 +92,12 @@ outputs:
         - libtorch * cuda*
         - libvulkan-loader
       run_constrained:
-        - rmm {{ rapids_version }}
+        - librmm {{ rapids_version }}
         - rapids_logger {{ rapids_version }}
-        - ucxx {{ ucxx_version }}
+        - libucxx {{ ucxx_version }}
     test:
       commands:
+        # Verify first-party runtime files are present
         - test -L $PREFIX/lib/libholoscan_core.so.{{ abiversion }}
         - test -L $PREFIX/lib/libholoscan_infer.so.{{ abiversion }}
         - test -L $PREFIX/lib/libholoscan_infer_onnx_runtime.so.{{ abiversion }}
@@ -149,6 +160,15 @@ outputs:
         - test -f $PREFIX/lib/libgxf_ucx.so
         - test -f $PREFIX/lib/gxf_extensions/libgxf_ucx_holoscan.so
         - test -f $PREFIX/lib/gxf_extensions/libgxf_ucx_holoscan_lib.so
+        # Verify first-party development files are not present
+        - test ! -d $PREFIX/lib/cmake/holoscan
+        # Verify third-party packages available on **rapidsai** channel are not present
+        - test ! -d $PREFIX/lib/cmake/rapids_logger
+        - test ! -d $PREFIX/lib/cmake/rmm
+        - test ! -d $PREFIX/lib/cmake/ucxx
+        - test ! -f $PREFIX/lib/librapids_logger.so
+        - test ! -f $PREFIX/lib/librmm.so
+        - test ! -f $PREFIX/lib/libucxx.so
     about:
       license: LicenseRef-NVIDIA-End-User-License-Agreement
       license_file:
@@ -159,10 +179,8 @@ outputs:
       description: |
         This is a runtime package only. Developers should install holoscan (python) and/or libholoscan-dev (C++ SDK) to build with Holoscan
 
-  # NOTE: libholoscan-dev is disabled pending RAPIDS AI components realignment (see rapidsai channel)
   - name: libholoscan-dev
     build:
-      skip: true                      # Skip pending realignment with RAPIDS AI
       missing_dso_whitelist:
         - "*libcuda.so*"              # driver
         - "*librmm.so*"               # RMM, available in RAPIDS channel
@@ -178,22 +196,27 @@ outputs:
       - bin/graph_surgeon.py
       - bin/gxf_entity_codec.py
       - bin/get_cmake_cuda_archs.py
-      - bin/holoscan
+      - bin/scheduler_overhead_benchmark.py
       - bin/test_plattern_validation.py
       - bin/video_validation.py
       - examples/
-      - include/3rdparty
-      - include/fmt
+      - include/3rdparty/matx              # no conda package for this, so re-vend this w/ licensing attached
+      - include/concurrentqueue # no conda package for this, so re-vend this w/ licensing attached
+      - include/tl                # no conda package for this, so re-vend this w/ licensing attached
       - include/gxf
       - include/holoinfer
       - include/holoscan
       - include/holoviz
-      - include/magic_enum.hpp
-      - include/rapids_logger
-      - include/rmm
+      #- include/rapids_logger  # Do not revend: should be provided by rapids_logger package in rapidsai channel
+      #- include/rmm            # Do not revend: should be provided by librmm package in rapidsai channel
       - lib/libholo*.so
+      - lib/cmake/concurrentqueue  # no conda package for this, so re-vend this w/ licensing attached
       - lib/cmake/holoscan
+      - lib/cmake/tl-expected      # no conda package for this, so re-vend this w/ licensing attached
       - lib/libholo*.a
+      #- lib/libucxx*           # Do not revend: should be provided by libucxx package in rapidsai channel
+      #- lib/librmm*            # Do not revend: should be provided by librmm package in rapidsai channel
+      #- lib/librapids_logger*  # Do not revend: should be provided by rapids_logger package in rapidsai channel
     requirements:
       build:
         - {{ compiler('c') }}
@@ -204,17 +227,25 @@ outputs:
         - cuda-version {{ cuda_compiler_version_min }}
       run:
         - {{ pin_subpackage("libholoscan", exact=True) }}
+        - cli11 {{ cli11_version }}
         - cuda-nvcc         # holoscan wants to explicitly install this as it is needed for holoscan public interface
         - cuda-cudart
         - cuda-cudart-dev   # holoscan wants to explicitly install this as it is needed for holoscan public interface
         - cuda-nvrtc-dev    # holoscan wants to explicitly install this as it is needed for holoscan public interface
+        - cuda-nvtx-dev
+        - dlpack {{ dlpack_version }}
+        - eigen {{ eigen_version }}
+        - fmt {{ fmt_version }}
         - libnpp-dev        # holoscan wants to explicitly install this as it is needed for holoscan public interface
         - libcublas-dev   # holoscan wants to explicitly install this as it is needed for holoscan public interface
         - libcufft-dev   # holoscan wants to explicitly install this as it is needed for holoscan public interface
         - libcurand-dev   # holoscan wants to explicitly install this as it is needed for holoscan public interface
         - libcusolver-dev   # holoscan wants to explicitly install this as it is needed for holoscan public interface
         - libcusparse-dev   # holoscan wants to explicitly install this as it is needed for holoscan public interface
-        - yaml-cpp-static   # holoscan wants to explicitly install this as it is needed for holoscan public interface
+        - libgomp
+        - magic_enum {{ magic_enum_version }}
+        - spdlog {{ spdlog_version }}
+        - yaml-cpp-static {{ yaml_cpp_version }}
     test:
       requires:
         - cmake
@@ -224,10 +255,8 @@ outputs:
         - {{ stdlib("c") }}
         - cuda-libraries-dev # need all CTK libs to compile all examples
         - patch  # needed by one of the examples
-        - yaml-cpp-static
-      # files:
-      #   - compile_examples.sh
       commands:
+        # Validate Holoscan first-party installation files
         - test -f $PREFIX/bin/convert_gxf_entities_to_images.py
         - test -f $PREFIX/bin/convert_gxf_entities_to_video.py
         - test -f $PREFIX/bin/convert_video_to_gxf_entities.py
@@ -237,18 +266,27 @@ outputs:
         - test -f $PREFIX/bin/graph_surgeon.py
         - test -f $PREFIX/bin/gxf_entity_codec.py
         - test -f $PREFIX/bin/get_cmake_cuda_archs.py
-        - test -f $PREFIX/bin/holoscan
         - test -f $PREFIX/bin/video_validation.py
-        - test -d $PREFIX/lib/cmake/holoscan
         - test -d $PREFIX/examples
-        - test -d $PREFIX/include/3rdparty
-        - test -d $PREFIX/include/fmt
         - test -d $PREFIX/include/gxf
         - test -d $PREFIX/include/holoinfer
         - test -d $PREFIX/include/holoscan
         - test -d $PREFIX/include/holoviz
-        - test -f $PREFIX/include/magic_enum.hpp
-        - test -d $PREFIX/include/rmm
+        - test -d $PREFIX/lib/cmake/holoscan
+        - test -d $PREFIX/lib/gxf_extensions
+        - test -f $PREFIX/lib/gxf_extensions/libgxf_ucx_holoscan_lib.so
+        - test -f $PREFIX/lib/gxf_extensions/libgxf_ucx_holoscan.so
+        - test -f $PREFIX/lib/libgxf_app.so
+        - test -f $PREFIX/lib/libgxf_core.so
+        - test -f $PREFIX/lib/libgxf_cuda.so
+        - test -f $PREFIX/lib/libgxf_logger.so
+        - test -f $PREFIX/lib/libgxf_multimedia.so
+        - test -f $PREFIX/lib/libgxf_pubsub.so
+        - test -f $PREFIX/lib/libgxf_rmm.so
+        - test -f $PREFIX/lib/libgxf_sample.so
+        - test -f $PREFIX/lib/libgxf_serialization.so
+        - test -f $PREFIX/lib/libgxf_std.so
+        - test -f $PREFIX/lib/libgxf_ucx.so
         - test -L $PREFIX/lib/libholoinfer_utils.so
         - test -L $PREFIX/lib/libholoscan_core.so
         - test -L $PREFIX/lib/libholoscan_infer.so
@@ -275,8 +313,43 @@ outputs:
         - test -L $PREFIX/lib/libholoscan_profiler.so
         - test -L $PREFIX/lib/libholoscan_spdlog_logger.so
         - test -L $PREFIX/lib/libholoscan_viz.so
+        - test -f $PREFIX/lib/libholoscan_gpu_resident_cuda.a
         - test -f $PREFIX/lib/libholoviz_imgui.a
-        - bash compile_examples.sh
+        # Validate that expected third-party files without conda-forge or rapidsai packages are re-vendored
+        - test -d $PREFIX/include/3rdparty/matx              # no conda package for this, so re-vend this w/ licensing attached
+        - test -f $PREFIX/include/concurrentqueue/concurrentqueue.h # no conda package for this, so re-vend this w/ licensing attached
+        - test -f $PREFIX/include/tl/expected.hpp # no conda package for this, so re-vend this w/ licensing attached
+        - test -d $PREFIX/lib/cmake/concurrentqueue
+        - test -d $PREFIX/lib/cmake/holoscan
+        - test -d $PREFIX/lib/cmake/tl-expected
+        # Validate that other third-party files with **rapidsai** packages are not re-vendored
+        - test ! -d $PREFIX/include/rapids_logger     # Do not revend: should be provided by rapids_logger package in rapidsai channel
+        - test ! -d $PREFIX/include/rmm               # Do not revend: should be provided by librmm package in rapidsai channel
+        - test ! -d $PREFIX/include/ucxx              # Do not revend: should be provided by libucxx package in rapidsai channel
+        - test ! -d $PREFIX/lib/cmake/rapids_logger
+        - test ! -d $PREFIX/lib/cmake/rmm
+        - test ! -d $PREFIX/lib/cmake/ucxx
+        - test ! -f $PREFIX/lib/librmm.so             # Do not revend: should be provided by librmm package in rapidsai channel
+        - test ! -f $PREFIX/lib/librapids_logger.so   # Do not revend: should be provided by rapids_logger package in rapidsai channel
+        - test ! -f $PREFIX/lib/libucxx.so            # Do not revend: should be provided by libucxx package in rapidsai channel
+        # Not tested: third-party files with **conda-forge** packages ought not be re-vendored. Conda-forge packages are already
+        # installed at test time, so we cannot check in the test stage. Please review manually.
+    about:
+      home: https://docs.nvidia.com/cuda/holoscan/
+      license: LicenseRef-NVIDIA-End-User-License-Agreement, BSD-2-Clause, BSD-3-Clause AND CC0-1.0
+      license_file:
+        - LICENSE
+        - NOTICE
+        - LICENSE-concurrentqueue.txt
+        - LICENSE-matx.txt
+        - LICENSE-tl-expected.txt
+      license_url: https://developer.download.nvidia.com/assets/Clara/NVIDIA_Clara_EULA.pdf
+      summary: NVIDIA Holoscan development headers, CMake targets, examples, and linker symlinks
+      description: |
+        Development package for NVIDIA Holoscan containing C/C++ headers, CMake config and
+        targets, SDK examples, static libraries, and unversioned .so symlinks for linking.
+        Install this package to build C++ applications against the Holoscan SDK.
+      doc_url: https://docs.nvidia.com/cuda/holoscan/
 
 about:
   home: https://docs.nvidia.com/cuda/holoscan/

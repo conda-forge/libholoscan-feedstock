@@ -1,0 +1,14 @@
+--- ./lib/cmake/holoscan/holoscan-config.cmake
++++ ./lib/cmake/holoscan/holoscan-config.cmake
+@@ -194,6 +194,11 @@
+ find_dependency(Eigen3 3.4)
+ find_dependency(fmt HINTS ${CMAKE_CURRENT_LIST_DIR}/../fmt)
+ find_dependency(magic_enum HINTS ${CMAKE_CURRENT_LIST_DIR}/../magic_enum)
++# Holoscan SDK needs <magic_enum.hpp> rather than <magic_enum/magic_enum.hpp>
++get_target_property(magic_enum_include_dirs magic_enum::magic_enum INTERFACE_INCLUDE_DIRECTORIES)
++list(APPEND magic_enum_include_dirs "${PACKAGE_PREFIX_DIR}/include/magic_enum")
++set_target_properties(magic_enum::magic_enum PROPERTIES
++	INTERFACE_INCLUDE_DIRECTORIES "${magic_enum_include_dirs}")
+ find_dependency(nvtx3 HINTS ${CMAKE_CURRENT_LIST_DIR}/../nvtx3)
+ find_dependency(spdlog HINTS ${CMAKE_CURRENT_LIST_DIR}/../spdlog)
+ find_dependency(tl-expected HINTS ${CMAKE_CURRENT_LIST_DIR}/../tl-expected)

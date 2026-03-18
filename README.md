@@ -31,6 +31,22 @@ Summary: NVIDIA Holoscan runtime library
 This is a runtime package only. Developers should install holoscan (python) and/or libholoscan-dev (C++ SDK) to build with Holoscan
 
 
+About libholoscan-dev
+---------------------
+
+Home: https://docs.nvidia.com/cuda/holoscan/
+
+Package license: [LicenseRef-NVIDIA-End-User-License-Agreement, BSD-2-Clause, BSD-3-Clause AND CC0-1.0](https://developer.download.nvidia.com/assets/Clara/NVIDIA_Clara_EULA.pdf)
+
+Summary: NVIDIA Holoscan development headers, CMake targets, examples, and linker symlinks
+
+Documentation: https://docs.nvidia.com/cuda/holoscan/
+
+Development package for NVIDIA Holoscan containing C/C++ headers, CMake config and
+targets, SDK examples, static libraries, and unversioned .so symlinks for linking.
+Install this package to build C++ applications against the Holoscan SDK.
+
+
 Current build status
 ====================
 
@@ -76,6 +92,7 @@ Current release info
 | Name | Downloads | Version | Platforms |
 | --- | --- | --- | --- |
 | [![Conda Recipe](https://img.shields.io/badge/recipe-libholoscan-green.svg)](https://anaconda.org/conda-forge/libholoscan) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/libholoscan.svg)](https://anaconda.org/conda-forge/libholoscan) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/libholoscan.svg)](https://anaconda.org/conda-forge/libholoscan) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/libholoscan.svg)](https://anaconda.org/conda-forge/libholoscan) |
+| [![Conda Recipe](https://img.shields.io/badge/recipe-libholoscan--dev-green.svg)](https://anaconda.org/conda-forge/libholoscan-dev) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/libholoscan-dev.svg)](https://anaconda.org/conda-forge/libholoscan-dev) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/libholoscan-dev.svg)](https://anaconda.org/conda-forge/libholoscan-dev) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/libholoscan-dev.svg)](https://anaconda.org/conda-forge/libholoscan-dev) |
 
 Installing libholoscan
 ======================
@@ -87,16 +104,16 @@ conda config --add channels conda-forge
 conda config --set channel_priority strict
 ```
 
-Once the `conda-forge` channel has been enabled, `libholoscan` can be installed with `conda`:
+Once the `conda-forge` channel has been enabled, `libholoscan, libholoscan-dev` can be installed with `conda`:
 
 ```
-conda install libholoscan
+conda install libholoscan libholoscan-dev
 ```
 
 or with `mamba`:
 
 ```
-mamba install libholoscan
+mamba install libholoscan libholoscan-dev
 ```
 
 It is possible to list all of the versions of `libholoscan` available on your platform with `conda`:
