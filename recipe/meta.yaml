@@ -2,19 +2,19 @@
 {% set abiversion = version.split('.')[0] %}
 {% set libversion = version.split('.')[:3] | join('.') %}
 # Pins aligned with public/cmake/deps where applicable
-{% set libtorch_version = "2.8.*" %}  # find_package(Torch 2.8) in public/modules/holoinfer/src/infer/torch/CMakeLists.txt
-{% set magic_enum_version = "0.9.*" %}  # magic_enum.cmake: 0.9.3
-{% set onnx_version = "1.22.*" %}  # Dockerfile ONNX_RUNTIME_VERSION=1.22.1
+{% set libtorch_version = "2.11.*" %}  # find_package(Torch 2.11) in public/modules/holoinfer/src/infer/torch/CMakeLists.txt
+{% set magic_enum_version = "0.9.*" %}  # magic_enum.cmake: 0.9.7
+{% set onnx_version = "1.24.*" %}  # Dockerfile ONNX_RUNTIME_VERSION=1.24.2
 {% set spdlog_version = "1.14.*" %}  # spdlog_rapids.cmake: 1.14.1
-{% set ucx_version = "1.19.*" %}  # ucx.cmake: find_package(ucx 1.19.0)
-{% set rapids_version = "25.10.*" %}  # rmm.cmake: RMM_TAG v25.10.00
-# This needs to stay in sync with 'rapids_version', e.g. for 'rapids_version=25.10 this should be '0.46.0'.
+{% set ucx_version = "1.20.*" %}  # ucx.cmake: find_package(ucx 1.20.0)
+{% set rapids_version = "26.02.*" %}  # rmm.cmake: RMM_TAG v26.02.00
+# This needs to stay in sync with 'rapids_version', e.g. for 'rapids_version=26.02 this should be '0.48.0'.
 # To find the corresponding ucxx_version for a given rapids_version, see e.g.
-# https://version.gpuci.io/rapids/25.10
-{% set ucxx_version = "0.46.*" %}  # ucxx_rapids.cmake: 0.46.0
+# https://version.gpuci.io/rapids/26.02
+{% set ucxx_version = "0.48.*" %}  # ucxx_rapids.cmake: 0.48.0
 # libholoscan-dev build-time deps (from public/cmake/deps)
 {% set fmt_version = "11.*" %}  # fmt_rapids.cmake: 11.0.2
-{% set cli11_version = "2.3.*" %}  # cli11_rapids.cmake: 2.3.2
+{% set cli11_version = "2.5.*" %}  # cli11_rapids.cmake: 2.5.0
 {% set dlpack_version = "1.*" %}  # dlpack_rapids.cmake: 1.0
 {% set yaml_cpp_version = "0.8.*" %}  # yaml-cpp_rapids.cmake: 0.8.0
 {% set eigen_version = "3.4.*" %}  # eigen3_urm.cmake: 3.4.0
