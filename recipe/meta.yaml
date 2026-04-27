@@ -226,9 +226,11 @@ outputs:
         - {{ stdlib("c") }}
       host:
         - {{ pin_subpackage("libholoscan", exact=True) }}
+        - cccl {{ cccl_version }}
         - cuda-version {{ cuda_compiler_version_min }}
       run:
         - {{ pin_subpackage("libholoscan", exact=True) }}
+        - cccl {{ cccl_version }}
         - cli11 {{ cli11_version }}
         - cuda-nvcc         # holoscan wants to explicitly install this as it is needed for holoscan public interface
         - cuda-cudart
