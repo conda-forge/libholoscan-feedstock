@@ -2,7 +2,8 @@
 {% set abiversion = version.split('.')[0] %}
 {% set libversion = version.split('.')[:3] | join('.') %}
 # Pins aligned with public/cmake/deps where applicable
-{% set libtorch_version = "2.11.*" %}  # find_package(Torch 2.11) in public/modules/holoinfer/src/infer/torch/CMakeLists.txt
+{% set cccl_version = "3.2*" %}
+{% set libtorch_version = "2.8*" %}  # find_package(Torch 2.11) in public/modules/holoinfer/src/infer/torch/CMakeLists.txt
 {% set magic_enum_version = "0.9.*" %}  # magic_enum.cmake: 0.9.7
 {% set onnx_version = "1.24.*" %}  # Dockerfile ONNX_RUNTIME_VERSION=1.24.2
 {% set spdlog_version = "1.14.*" %}  # spdlog_rapids.cmake: 1.14.1
@@ -212,6 +213,7 @@ outputs:
       - lib/libholo*.so
       - lib/cmake/concurrentqueue  # no conda package for this, so re-vend this w/ licensing attached
       - lib/cmake/holoscan
+      - lib/cmake/matx
       - lib/cmake/tl-expected      # no conda package for this, so re-vend this w/ licensing attached
       - lib/libholo*.a
       #- lib/libucxx*           # Do not revend: should be provided by libucxx package in rapidsai channel
@@ -321,6 +323,7 @@ outputs:
         - test -f $PREFIX/include/tl/expected.hpp # no conda package for this, so re-vend this w/ licensing attached
         - test -d $PREFIX/lib/cmake/concurrentqueue
         - test -d $PREFIX/lib/cmake/holoscan
+        - test -d $PREFIX/lib/cmake/matx
         - test -d $PREFIX/lib/cmake/tl-expected
         # Validate that other third-party files with **rapidsai** packages are not re-vendored
         - test ! -d $PREFIX/include/rapids_logger     # Do not revend: should be provided by rapids_logger package in rapidsai channel

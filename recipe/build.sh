@@ -25,6 +25,7 @@ rm -rv lib/cmake/CLI11
 rm -rv lib/cmake/dlpack
 rm -rv lib/cmake/fmt
 rm -rv lib/cmake/magic_enum
+# rm -rv lib/cmake/matx          # No conda package, keep and re-vend w/ licensing attached
 rm -rv lib/cmake/nvtx3
 rm -rv lib/cmake/spdlog
 # rm -rv lib/cmake/tl-expected   # No conda package, keep and re-vend w/ licensing attached
