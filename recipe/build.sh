@@ -8,13 +8,11 @@ set -x
 ################################################################################
 rm -vr include/CLI
 # rm -vr include/concurrentqueue   # No conda package, keep and re-vend w/ licensing attached
-rm -vr include/cub                 # cccl: provided by conda-forge `cccl`
-rm -vr include/cuda                # cccl: libcu++, provided by conda-forge `cccl`
+rm -vr include/cccl                 # cccl: provided by conda-forge `cccl`
 rm -vr include/dlpack
 rm -vr include/fmt
 rm -vr include/nvtx3
 rm -vr include/spdlog
-rm -vr include/thrust              # cccl: provided by conda-forge `cccl`
 # rm -vr include/tl-expected   # No conda package, keep and re-vend w/ licensing attached
 rm -vr include/ucxx
 rm -vr include/3rdparty/Eigen
