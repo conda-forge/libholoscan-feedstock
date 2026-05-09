@@ -8,6 +8,7 @@ set -x
 ################################################################################
 rm -vr include/CLI
 # rm -vr include/concurrentqueue   # No conda package, keep and re-vend w/ licensing attached
+rm -vr include/cccl                 # cccl: provided by conda-forge `cccl`
 rm -vr include/dlpack
 rm -vr include/fmt
 rm -vr include/nvtx3
@@ -22,11 +23,17 @@ rm -vr include/3rdparty/yaml-cpp
 # Remove CMake configuration subdirectories
 rm -rv lib/cmake/CLI11
 # rm -rv lib/cmake/concurrentqueue   # No conda package, keep and re-vend w/ licensing attached
+rm -rv lib/cmake/cccl                # cccl: provided by conda-forge `cccl`
+rm -rv lib/cmake/cub                 # cccl: provided by conda-forge `cccl`
+rm -rv lib/cmake/cudax               # cccl: provided by conda-forge `cccl`
 rm -rv lib/cmake/dlpack
 rm -rv lib/cmake/fmt
+rm -rv lib/cmake/libcudacxx          # cccl: provided by conda-forge `cccl`
 rm -rv lib/cmake/magic_enum
+# rm -rv lib/cmake/matx          # No conda package, keep and re-vend w/ licensing attached
 rm -rv lib/cmake/nvtx3
 rm -rv lib/cmake/spdlog
+rm -rv lib/cmake/thrust              # cccl: provided by conda-forge `cccl`
 # rm -rv lib/cmake/tl-expected   # No conda package, keep and re-vend w/ licensing attached
 rm -rv lib/cmake/ucx
 rm -rv lib/cmake/yaml-cpp
