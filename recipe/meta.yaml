@@ -191,16 +191,16 @@ outputs:
       - bin/convert_gxf_entities_to_images.py
       - bin/convert_gxf_entities_to_video.py
       - bin/convert_video_to_gxf_entities.py
-      - bin/ctest_time_comparison.py
       - bin/download_ngc_data
       - bin/generate_extension_uuids.py
+      - bin/get_cmake_cuda_archs.py
       - bin/graph_surgeon.py
       - bin/gxf_entity_codec.py
-      - bin/get_cmake_cuda_archs.py
       - bin/scheduler_overhead_benchmark.py
-      - bin/test_plattern_validation.py
       - bin/video_validation.py
       - examples/
+      - share/doc/holoscan/
+      - share/holoscan/test/
       - include/3rdparty/matx              # no conda package for this, so re-vend this w/ licensing attached
       - include/concurrentqueue # no conda package for this, so re-vend this w/ licensing attached
       - include/tl                # no conda package for this, so re-vend this w/ licensing attached
@@ -264,12 +264,12 @@ outputs:
         - test -f $PREFIX/bin/convert_gxf_entities_to_images.py
         - test -f $PREFIX/bin/convert_gxf_entities_to_video.py
         - test -f $PREFIX/bin/convert_video_to_gxf_entities.py
-        - test -f $PREFIX/bin/ctest_time_comparison.py
         - test -f $PREFIX/bin/download_ngc_data
         - test -f $PREFIX/bin/generate_extension_uuids.py
+        - test -f $PREFIX/bin/get_cmake_cuda_archs.py
         - test -f $PREFIX/bin/graph_surgeon.py
         - test -f $PREFIX/bin/gxf_entity_codec.py
-        - test -f $PREFIX/bin/get_cmake_cuda_archs.py
+        - test -f $PREFIX/bin/scheduler_overhead_benchmark.py
         - test -f $PREFIX/bin/video_validation.py
         - test -d $PREFIX/examples
         - test -d $PREFIX/include/gxf
@@ -319,6 +319,8 @@ outputs:
         - test -L $PREFIX/lib/libholoscan_viz.so
         - test -f $PREFIX/lib/libholoscan_gpu_resident_cuda.a
         - test -f $PREFIX/lib/libholoviz_imgui.a
+        - test -f $PREFIX/share/doc/holoscan/README.md
+        - test -f $PREFIX/share/holoscan/test/test_pattern_validation.py
         # Validate that expected third-party files without conda-forge or rapidsai packages are re-vendored
         - test -d $PREFIX/include/3rdparty/matx              # no conda package for this, so re-vend this w/ licensing attached
         - test -f $PREFIX/include/concurrentqueue/concurrentqueue.h # no conda package for this, so re-vend this w/ licensing attached
