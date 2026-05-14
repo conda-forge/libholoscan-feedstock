@@ -23,11 +23,8 @@
 {% set platform = "linux-sbsa" %}    # [aarch64]
 {% set extension = "tar.xz" %}
 
-{% set sha256_cu12 = "2644bc23debf37c73c318e1c9220de0d14fce3107b42f0d5ab9247a2212ba21b" %}  # [linux64]
-{% set sha256_cu12 = "3fa4c9b2b1a0401730d3c2f1535313bda19366abcf8b9a0795fd10072c371059" %}  # [aarch64 and arm_variant_type == "sbsa"]
-{% set sha256_cu13 = "" %}  # [linux64]   # TODO: fill when NVIDIA publishes the CUDA 13 redist archive
-{% set sha256_cu13 = "" %}  # [aarch64 and arm_variant_type == "sbsa"]   # TODO
-{% set cuda_major = (cuda_compiler_version or "12").split(".")[0] %}
+{% set sha256 = "" %}  # [linux64]   # TODO: fill when NVIDIA publishes the CUDA 13 redist archive
+{% set sha256 = "" %}  # [aarch64 and arm_variant_type == "sbsa"]   # TODO
 
 package:
   name: libholoscan-split
@@ -40,8 +37,8 @@ source:
     - patches/holoscan-config.patch
 {% else %}
 source:
-  - url: https://developer.download.nvidia.com/compute/holoscan/redist/holoscan/{{ platform }}/holoscan-{{ platform }}-{{ version }}_cuda{{ cuda_major }}-archive.{{ extension }}
-    sha256: {{ sha256_cu12 if cuda_major == "12" else sha256_cu13 }}
+  - url: https://developer.download.nvidia.com/compute/holoscan/redist/holoscan/{{ platform }}/holoscan-{{ platform }}-{{ version }}_cuda13-archive.{{ extension }}
+    sha256: {{ sha256 }}
     patches:
       - patches/holoscan-config.patch
 {% endif %}
@@ -49,7 +46,7 @@ source:
 build:
   number: 1
   skip: true  # [not (linux64 or aarch64)]
-  skip: true  # [cuda_compiler_version in (None, "None", "") or (cuda_compiler_version or "").startswith("11")]
+  skip: true  # [cuda_compiler_version in (None, "None", "") or (cuda_compiler_version or "").startswith("11") or (cuda_compiler_version or "").startswith("12")]
 
 requirements:
   build:
@@ -73,7 +70,7 @@ outputs:
         - "*librmm.so*"               # RMM, available in RAPIDS channel
         - "*libucxx.so*"              # UCXX, available in RAPIDS channel
       ignore_run_exports:
-        # we support cuda-version >= 12.6
+        # we support cuda-version >= 13
         - cuda-version
       post-link: post-link
     files:
