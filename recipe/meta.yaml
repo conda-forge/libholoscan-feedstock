@@ -44,6 +44,7 @@ build:
 requirements:
   build:
     - cf-nvidia-tools 1  # [linux]
+    - file               # [linux]   # used by build.sh to gate check-glibc to ELF files
     - {{ stdlib("c") }}
 
 outputs:
@@ -75,7 +76,6 @@ outputs:
         - {{ compiler('cxx') }}
         - {{ compiler('cuda') }}
         - {{ stdlib("c") }}
-        - file  # provides $PREFIX/bin/file command needed by build.sh
       host:
         - cuda-version {{ cuda_compiler_version_min }}
         - cuda-nvrtc-dev
