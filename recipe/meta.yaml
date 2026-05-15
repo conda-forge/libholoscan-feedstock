@@ -73,7 +73,7 @@ outputs:
         - {{ compiler('c') }}
         - {{ compiler('cxx') }}
         - {{ compiler('cuda') }}
-        - {{ stdlib("c") }}
+        - file  # provides $PREFIX/bin/file command needed by build.sh
       host:
         - cuda-version {{ cuda_compiler_version_min }}
         - cuda-nvrtc-dev

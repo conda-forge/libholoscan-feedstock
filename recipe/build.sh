@@ -58,8 +58,6 @@ rm -rv lib/cmake/ucxx
 rm -v lib/libucxx*
 rm -v lib/librapids_logger*
 rm -v lib/librmm*
-# UCX binaries: provided by conda-forge `ucx` and built against a newer glibc
-# (2.34) than this recipe's pin — fails the glibc compatibility check.
 rm -fv bin/ucx_info bin/ucx_perftest
 
 ################################################################################
