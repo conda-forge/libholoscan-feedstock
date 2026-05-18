@@ -58,6 +58,38 @@ rm -rv lib/cmake/ucxx
 rm -v lib/libucxx*
 rm -v lib/librapids_logger*
 rm -v lib/librmm*
+rm -fv bin/ucx_info bin/ucx_perftest
+
+################################################################################
+# Relocate and curate non-binary files from the upstream tarball
+################################################################################
+# Move the scripts README out of bin/ to share/doc/holoscan/, then prepend a
+# note acknowledging that not every script documented upstream is included in
+# this conda package.
+mkdir -p $PREFIX/share/doc/holoscan
+{
+    cat <<'NOTE'
+> **NOTE**: This is the upstream Holoscan scripts README. Not every script
+> documented below is included in this conda package — only a curated subset
+> ships under `$CONDA_PREFIX/bin` and `$CONDA_PREFIX/share/holoscan/test`.
+
+NOTE
+    cat bin/README.md
+} > $PREFIX/share/doc/holoscan/README.md
+rm -fv bin/README.md
+
+# Move test_pattern_validation.py out of bin/: it's a package-install validator,
+# not a user-facing executable on PATH.
+mkdir -p $PREFIX/share/holoscan/test
+mv -v bin/test_pattern_validation.py $PREFIX/share/holoscan/test/test_pattern_validation.py
+
+# Drop CI-only helper that is not documented as a user-facing tool in the
+# upstream scripts README.
+rm -fv bin/ctest_time_comparison.py
+
+# libgcc_s.so as a GCC linker-script redirector must come from the compiler
+# runtime package, not this redist.
+rm -fv lib/libgcc_s.so
 
 ################################################################################
 # Copy remaining files to conda package directory
@@ -77,5 +109,9 @@ ls -l $PREFIX/lib/
 ls -l $PREFIX/lib/cmake/
 ls -l $PREFIX/lib/gxf_extensions/
 
-check-glibc $PREFIX/bin/* $PREFIX/lib/* $PREFIX/lib/gxf_extensions/*
-find python/ -name "*.so*" | xargs -I"{}" check-glibc "{}"
+# Only run check-glibc against actual ELF binaries. The unfiltered glob would
+# include Python scripts, shell scripts, README.md, and GCC linker scripts —
+# each producing a readelf "Not an ELF file" error that masks real issues.
+find $PREFIX/bin $PREFIX/lib $PREFIX/lib/gxf_extensions -maxdepth 1 -type f \
+    -exec sh -c 'if file -b "$1" | grep -q "^ELF"; then check-glibc "$1"; fi' _ {} \;
+find python/ -name "*.so*" -exec check-glibc {} \;
