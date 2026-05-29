@@ -30,18 +30,11 @@ package:
   name: libholoscan-split
   version: {{ version }}
 
-{% if environ.get("HOLOSCAN_LOCAL_INSTALL_DIR") %}
-source:
-  path: {{ environ["HOLOSCAN_LOCAL_INSTALL_DIR"] }}
-  patches:
-    - patches/holoscan-config.patch
-{% else %}
 source:
   - url: https://developer.download.nvidia.com/compute/holoscan/redist/holoscan/{{ platform }}/holoscan-{{ platform }}-{{ version }}_cuda13-archive.{{ extension }}
     sha256: {{ sha256 }}
     patches:
       - patches/holoscan-config.patch
-{% endif %}
 
 build:
   number: 1
