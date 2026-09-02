@@ -1,4 +1,4 @@
-{% set version = environ.get("HOLOSCAN_VERSION", "4.5.0.0") %}
+{% set version = environ.get("HOLOSCAN_VERSION", "4.6.0.0") %}
 {% set abiversion = version.split('.')[0] %}
 {% set libversion = version.split('.')[:3] | join('.') %}
 # Pins aligned with public/cmake/deps where applicable
@@ -23,8 +23,8 @@
 {% set platform = "linux-sbsa" %}    # [aarch64]
 {% set extension = "tar.xz" %}
 
-{% set sha256 = "0d6b870de1a28fc2e6013ba5cfac1c4b032d00395aad14f5953e07c19fb75f47" %}  # [linux64]
-{% set sha256 = "9dd77ce1fc733a77c550f42c6038a62ac16d24d77b8c77a75e2da21ea1a5f07f" %}  # [aarch64 and arm_variant_type == "sbsa"]
+{% set sha256 = "c4a73895996449dbd44757bc3375cfa1330fc774df2ab7d0945236078333e0b6" %}  # [linux64]
+{% set sha256 = "a8d21feb8b7f4da2b8190ffc448bfecadb71d6b647a043732122acd61bd53c1f" %}  # [aarch64 and arm_variant_type == "sbsa"]
 
 package:
   name: libholoscan-split
