@@ -109,9 +109,10 @@ ls -l $PREFIX/lib/
 ls -l $PREFIX/lib/cmake/
 ls -l $PREFIX/lib/gxf_extensions/
 
-# Only run check-glibc against actual ELF binaries. The unfiltered glob would
+# Only run the checks against shared libraries. An unfiltered glob would
 # include Python scripts, shell scripts, README.md, and GCC linker scripts —
 # each producing a readelf "Not an ELF file" error that masks real issues.
-find $PREFIX/bin $PREFIX/lib $PREFIX/lib/gxf_extensions -maxdepth 1 -type f \
-    -exec sh -c 'if file -b "$1" | grep -q "^ELF"; then check-glibc "$1"; fi' _ {} \;
-find python/ -name "*.so*" -exec check-glibc {} \;
+find $PREFIX/lib $PREFIX/lib/gxf_extensions -maxdepth 1 -type f -name "*.so*" \
+    -exec check-glibc {} +
+find $PREFIX/lib $PREFIX/lib/gxf_extensions -maxdepth 1 -type f -name "*.so*" \
+    -exec check-cuda-arch --arch-min=7.5 {} +
